@@ -1,0 +1,253 @@
+<template>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th 
+            v-for="{dataIndex, label} in columns" 
+            :key="dataIndex"
+            @click="handleSort(dataIndex)"
+          >
+            {{label}}
+            <div class="th-icons" v-if="sorting && sorting.key === dataIndex">
+              <img  v-if="sorting.sort === 'highToLow'" class="th-icon" src="../assets/up.svg"/>
+              <img  v-else class="th-icon" src="../assets/down.svg"/>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(data, i) in getData" :key="i">
+          <td
+            :class="{'link-row': to}"
+            v-for="column in columns" 
+            :key="column.dataIndex"
+            @click="handleRowClick(data)"
+          >
+            {{getValueByIndex(column, data)}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p 
+    class="no-data-text" 
+    v-if="dataSource.length === 0"
+  >
+    Veri bulunamadı...
+  </p>
+  <div class="pagination" v-if="dataSource.length">
+    <button 
+      class="page"
+      @click="currentPage--" 
+      :disabled="currentPage == 1"
+    >
+      Geri
+    </button>
+    <button 
+      class="page"
+      v-for="(_,i) in getPagination" 
+      :key="i"
+      :class="{
+        active: i + 1 === currentPage, 
+        hide:  hidePaginationPage(i)
+      }"
+      @click="currentPage = i + 1"
+    >
+      {{i + 1}}
+    </button>
+    <button 
+      class="page"
+      @click="currentPage++" 
+      :disabled="currentPage == totalPage"
+    >
+      İleri
+    </button>
+    <select v-model="size">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+  </div>
+</template>
+
+<script>
+import _ from 'lodash';
+
+export default {
+  name: 'Table',
+  props: {
+    columns: Array,
+    dataSource: Array,
+    to: String
+  },
+  data() {
+    return {
+      size: 10,
+      currentPage: 1,
+      sorting: null
+    }
+  },
+  mounted(){
+    console.log(this.value)
+  },
+  computed: {
+    getData() {
+      const { currentPage, size, dataSource, sorting } = this;
+      const start = (currentPage - 1) * size; 
+      const end = currentPage * size;
+      let modifyData = [...dataSource]
+      if(sorting) {
+        const { key, sort } = sorting;
+        modifyData.sort((a, b) => {
+          var aValue = Array.isArray(key) ?_.get(a, key) : a[key];
+          var bValue = Array.isArray(key) ? _.get(b, key) : b[key] ;
+          if(aValue < bValue) {
+            return sort === 'lowToHigh' ? -1 : 1;
+          } else if(bValue < aValue) {
+            return sort === 'lowToHigh' ? 1 : -1;
+          }
+          return 0;
+        })
+      }
+      return modifyData.slice(start, end);
+    },
+    getPagination() {
+      return [...Array(this.totalPage)]
+    },
+    totalPage() {
+      return Math.ceil(this.dataSource.length / this.size);
+    },
+  },
+  watch: {
+    size() {
+      this.currentPage = 1;
+    }
+  },
+  methods: {
+    getValueByIndex(column, data) {
+      const { dataIndex, render } = column;
+      const value = (Array.isArray(dataIndex) ? _.get(data, dataIndex) : data[dataIndex]);;
+      return render ? render(value, data)  : value ;
+    },
+    hidePaginationPage(i) {
+      const page = i + 1;
+      const { currentPage, totalPage } = this;
+      return (
+        (page > currentPage + 1 || page < currentPage -1) && page < totalPage
+      ) 
+    },
+    handleRowClick({ id }) {
+      if(this.to) {
+        this.$router.push(`${this.to}/${id}`)
+      }
+    },
+    handleSort(index) {
+      const { sorting } = this;
+      if(!sorting || sorting.key != index) {
+        this.sorting = {
+          key: index,
+          sort: 'lowToHigh'
+        }
+      } else if(sorting.sort == 'highToLow') {
+        this.sorting = null;
+      } else if(sorting.sort == 'lowToHigh') {
+        this.sorting = {
+          ...sorting,
+          sort: 'highToLow'
+        }
+      }
+      console.log(this.sorting);
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+  .table-responsive {
+    overflow-x: auto;
+    padding: 10px;
+  }
+  table {
+    table-layout: auto;
+    color: rgba(0,0,0,.85);
+    font-variant: tabular-nums;
+    line-height: 1.5715;
+    list-style: none;
+    font-feature-settings: "tnum";
+    font-size: 16px;
+    text-align: left;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    tr, td, th {
+      padding: 16px;
+      overflow-wrap: break-word;
+    }
+    thead > tr > th {
+      color: rgba(0,0,0,.85);
+      font-weight: 500;
+      text-align: left;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background .2s ease;
+      cursor: pointer;
+      position: relative;
+      &:hover {
+        background-color: #ddd;
+      }
+      .th-icons {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 20px;
+        .th-icon {
+          width: 15px;
+          height: 15px;
+        }
+      }
+    }
+    tbody > tr {
+      &:hover {
+        background: #eee;
+      }
+    }
+    tbody > tr > td {
+      border-bottom: 1px solid #f0f0f0;
+      &.link-row {
+        cursor: pointer;
+      }
+    }
+  }
+  .no-data-text {
+    text-align: center;
+  }
+  .pagination {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    .page {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 32px;
+      height: 32px;
+      background: #fafafa;
+      margin-left: 10px;
+      border-radius: 5px;;
+      border: 1px solid #d9d9d9;
+      padding: 0 5px;
+      user-select: none;
+      cursor: pointer;
+      font-size: 14px;
+      &.active {
+        border-color: #32a84b;
+      }
+      &.hide {
+        display: none
+      }
+    }
+  }
+</style>
