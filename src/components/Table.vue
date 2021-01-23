@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th
+            class="table-column"
             v-for="{ dataIndex, label } in columns"
             :key="dataIndex"
             @click="handleSort(dataIndex)"
@@ -21,9 +22,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(data, i) in getData" :key="i">
+        <tr v-for="(data, i) in getData" :key="i" class="table-row" :class="{ 'link-row': to }">
           <td
-            :class="{ 'link-row': to }"
             v-for="column in columns"
             :key="column.dataIndex"
             @click="handleRowClick(data)"
@@ -35,37 +35,18 @@
     </table>
   </div>
   <p class="no-data-text" v-if="dataSource.length === 0">Veri bulunamadı...</p>
-  <div class="pagination" v-if="dataSource.length">
-    <button class="page" @click="currentPage--" :disabled="currentPage == 1">
-      Geri
-    </button>
-    <button
-      class="page"
-      v-for="(_, i) in getPagination"
-      :key="i"
-      :class="{
-        active: i + 1 === currentPage,
-        hide: hidePaginationPage(i),
-      }"
-      @click="currentPage = i + 1"
-    >
-      {{ i + 1 }}
-    </button>
-    <button
-      class="page"
-      @click="currentPage++"
-      :disabled="currentPage == totalPage"
-    >
-      İleri
-    </button>
-  </div>
+  <Pagination :size="10" v-model="currentPage" :total="dataSource.length" />
 </template>
 
 <script>
 import _ from "lodash";
+import Pagination from "./Pagination.vue";
 
 export default {
   name: "Table",
+  components: {
+    Pagination
+  },
   props: {
     columns: Array,
     dataSource: Array,
@@ -102,9 +83,6 @@ export default {
     totalPage() {
       return Math.ceil(this.dataSource.length / this.size);
     },
-    getPagination() {
-      return [...Array(this.totalPage)];
-    },
   },
   methods: {
     getValueByIndex(column, data) {
@@ -113,13 +91,6 @@ export default {
         ? _.get(data, dataIndex)
         : data[dataIndex];
       return render ? render(value, data) : value;
-    },
-    hidePaginationPage(i) {
-      const page = i + 1;
-      const { currentPage, totalPage } = this;
-      return (
-        (page > currentPage + 1 || page < currentPage - 1) && page < totalPage
-      );
     },
     handleRowClick({ id }) {
       const { to, $router } = this;
@@ -196,12 +167,12 @@ table {
     &:hover {
       background: #eee;
     }
-  }
-  tbody > tr > td {
-    border-bottom: 1px solid #d3d3d3;
     &.link-row {
       cursor: pointer;
     }
+  }
+  tbody > tr > td {
+    border-bottom: 1px solid #d3d3d3;
   }
 }
 .no-data-text {

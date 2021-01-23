@@ -6,7 +6,7 @@
       :value="modelValue"
       @keyup.enter="onClick"
     />
-    <button @click="onClick">Ara</button>
+    <button @click="onClick">Search</button>
   </div>
 </template>
 

@@ -9,14 +9,15 @@
         <p>{{ event.info }}</p>
         <div class="event-date">
           <img class="event-icon" src="../assets/calendar.svg" />
-          <p>{{ eventDate }}</p>
+          <span>{{ eventDate }}</span>
         </div>
         <div class="event-price">
           <img class="event-icon" src="../assets/price.svg" />
-          <p v-if="event.priceRanges">
+          <span v-if="event.priceRanges">
             {{ event.priceRanges[0].min }} - {{ event.priceRanges[0].max }}
             {{ event.priceRanges[0].currency }}
-          </p>
+          </span>
+          <span v-else>-</span>
         </div>
         <div class="products">
           <div
@@ -27,7 +28,7 @@
             <p class="product-name">
               {{ product.name }}
             </p>
-            <button class="product-buy-btn">SATIN AL</button>
+            <button class="product-buy-btn">Buy Ticket</button>
           </div>
         </div>
         <div class="seatmap">
@@ -58,7 +59,7 @@ export default {
   computed: {
     getEventImageStyle() {
       if (this.event) {
-        return `background: url(${this.event.images[0].url}) no-repeat center center`;
+        return `background: url(${this.event.images[0].url}) no-repeat center center;background-size: cover;`;
       }
     },
     eventDate() {
@@ -84,7 +85,6 @@ export default {
   }
   .event-image {
     height: 400px;
-    background-size: cover;
   }
   .event-name {
     font-size: 42px;
@@ -94,7 +94,8 @@ export default {
   .event-price {
     display: flex;
     align-items: center;
-    p {
+    margin-bottom: 10px;
+    span {
       margin-left: 10px;
     }
   }
@@ -118,6 +119,7 @@ export default {
   .seatmap {
     margin-top: 30px;
     padding: 20px;
+    text-align: center;
     img {
       max-width: 100%;
     }

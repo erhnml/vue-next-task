@@ -35,20 +35,21 @@ export default {
       loading: true,
       columns: [
         {
-          label: "Adı",
+          label: "Name",
           dataIndex: "name",
         },
         {
-          label: "Tür",
+          label: "Type",
           dataIndex: "type",
+          render: value => value.toUpperCase()
         },
         {
-          label: "Başlama Tarihi",
+          label: "Date",
           dataIndex: ["dates", "start", "dateTime"],
           render: (value) => moment(value).format("LLLL"),
         },
         {
-          label: "Fiyat",
+          label: "Price",
           dataIndex: ["priceRanges", "0", "min"],
           render: (value) => (value ? `$${value}` : "-"),
         },
