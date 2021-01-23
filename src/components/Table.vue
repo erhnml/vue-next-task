@@ -22,7 +22,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(data, i) in getData" :key="i" class="table-row" :class="{ 'link-row': to }">
+        <tr
+          v-for="(data, i) in getData"
+          :key="i"
+          class="table-row"
+          :class="{ 'link-row': to }"
+        >
           <td
             v-for="column in columns"
             :key="column.dataIndex"
@@ -45,7 +50,7 @@ import Pagination from "./Pagination.vue";
 export default {
   name: "Table",
   components: {
-    Pagination
+    Pagination,
   },
   props: {
     columns: Array,

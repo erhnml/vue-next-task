@@ -2,7 +2,7 @@
   <Header />
   <div class="container">
     <div class="content">
-      <Search v-model="keyword" :onClick="fetchData" />
+      <Search v-model="keyword" @onSearch="fetchData" />
       <Loader v-if="loading" />
       <Table v-else to="/detail" :columns="columns" :dataSource="events" />
     </div>
@@ -41,7 +41,7 @@ export default {
         {
           label: "Type",
           dataIndex: "type",
-          render: value => value.toUpperCase()
+          render: (value) => value.toUpperCase(),
         },
         {
           label: "Date",
@@ -71,6 +71,4 @@ export default {
     },
   },
 };
-
-// api: U34YVlos9iqC8hlpBIywd10EyyRngDxA
 </script>

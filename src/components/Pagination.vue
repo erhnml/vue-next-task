@@ -9,15 +9,15 @@
     </button>
     <button
       class="page"
-      v-for="(_, i) in getPagination"
-      :key="i"
+      v-for="page in totalPage"
+      :key="page"
       :class="{
-        active: i + 1 === modelValue,
-        hide: hidePaginationPage(i),
+        active: page === modelValue,
+        hide: hidePaginationPage(page),
       }"
-      @click="$emit('update:modelValue', i + 1)"
+      @click="$emit('update:modelValue', page)"
     >
-      {{ i + 1 }}
+      {{ page }}
     </button>
     <button
       class="page"
@@ -35,7 +35,7 @@ export default {
   props: {
     modelValue: Number,
     total: Number,
-    size: Number
+    size: Number,
   },
   emits: ["update:modelValue"],
   computed: {
@@ -43,14 +43,9 @@ export default {
       const { size, total } = this;
       return Math.ceil(total / size);
     },
-    getPagination() {
-      const { totalPage } = this;
-      return [...Array(totalPage)];
-    },
   },
   methods: {
-    hidePaginationPage(i) {
-      const page = i + 1;
+    hidePaginationPage(page) {
       const { modelValue, totalPage } = this;
       return (
         (page > modelValue + 1 || page < modelValue - 1) && page < totalPage

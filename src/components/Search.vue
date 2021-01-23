@@ -4,20 +4,19 @@
     <input
       @change="$emit('update:modelValue', $event.target.value)"
       :value="modelValue"
-      @keyup.enter="onClick"
+      @keyup.enter="$emit('onSearch')"
     />
-    <button @click="onClick">Search</button>
+    <button @click="$emit('onSearch')">Search</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Header",
+  name: "Search",
   props: {
-    onClick: Function,
     modelValue: String,
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "onSearch"],
 };
 </script>
 
