@@ -1,58 +1,59 @@
 <template>
   <Header />
   <div class="container">
-    <Search v-model="keyword" :onClick="fetchData"/>
-    <p v-if="loading">Loading...</p>
-    <Table 
-        v-else
-        to="/detail" 
-        :columns="columns" 
-        :dataSource="events" 
-      />
+    <div class="content">
+      <Search v-model="keyword" :onClick="fetchData" />
+      <Loader v-if="loading" />
+      <Table v-else to="/detail" :columns="columns" :dataSource="events" />
+    </div>
   </div>
 </template>
 
 <script>
-import Table from '../components/Table.vue';
-import Header from '../components/Header.vue';
-import Search from '../components/Search.vue';
+import moment from "moment";
+import Table from "../components/Table.vue";
+import Header from "../components/Header.vue";
+import Search from "../components/Search.vue";
+import Loader from "../components/Loader.vue";
 
 export default {
-  name: 'List',
+  name: "List",
   model: {
-    prop: 'title',
-    event: 'change'
+    prop: "title",
+    event: "change",
   },
   components: {
     Table,
     Header,
-    Search
+    Search,
+    Loader,
   },
   data() {
     return {
-      keyword: '',
+      keyword: "",
       events: [],
       loading: true,
       columns: [
         {
-          label: 'Adı', 
-          dataIndex: 'name'
+          label: "Adı",
+          dataIndex: "name",
         },
         {
-          label: 'Tür',
-          dataIndex: 'type'
+          label: "Tür",
+          dataIndex: "type",
         },
         {
-          label: 'Başlama Tarihi', 
-          dataIndex: ['dates', 'start','localDate']
+          label: "Başlama Tarihi",
+          dataIndex: ["dates", "start", "dateTime"],
+          render: (value) => moment(value).format("LLLL"),
         },
         {
-          label: 'Fiyat', 
-          dataIndex: ['priceRanges','0','min'], 
-          render: value => value ? `${value} TL` : '-'
-        }
-      ]
-    }
+          label: "Fiyat",
+          dataIndex: ["priceRanges", "0", "min"],
+          render: (value) => (value ? `$${value}` : "-"),
+        },
+      ],
+    };
   },
   async mounted() {
     await this.fetchData();
@@ -60,13 +61,15 @@ export default {
   methods: {
     async fetchData() {
       this.loading = true;
-      const res = await fetch(`https://app.ticketmaster.com/discovery/v2/events.json?keyword=${this.keyword}&size=100&apikey=U34YVlos9iqC8hlpBIywd10EyyRngDxA`)
+      const res = await fetch(
+        `https://app.ticketmaster.com/discovery/v2/events.json?keyword=${this.keyword}&size=100&apikey=U34YVlos9iqC8hlpBIywd10EyyRngDxA`
+      );
       const json = await res.json();
       this.events = json?._embedded?.events || [];
       this.loading = false;
-    }
-  }
-}
+    },
+  },
+};
 
 // api: U34YVlos9iqC8hlpBIywd10EyyRngDxA
 </script>
