@@ -38,9 +38,16 @@
         </tr>
       </tbody>
     </table>
+    <div class="no-data" v-if="!dataSource.length">
+      <span>Veri bulunamadı...</span>
+    </div>
   </div>
-  <p class="no-data-text" v-if="dataSource.length === 0">Veri bulunamadı...</p>
-  <Pagination :size="10" v-model="currentPage" :total="dataSource.length" />
+  <Pagination
+    v-if="dataSource.length"
+    :size="10"
+    v-model="currentPage"
+    :total="dataSource.length"
+  />
 </template>
 
 <script>
@@ -154,6 +161,7 @@ table {
     transition: background 0.2s ease;
     cursor: pointer;
     position: relative;
+    user-select: none;
     &:hover {
       background-color: #ddd;
     }
@@ -180,8 +188,9 @@ table {
     border-bottom: 1px solid #d3d3d3;
   }
 }
-.no-data-text {
+.no-data {
   text-align: center;
+  padding: 10px 0;
 }
 .pagination {
   margin-bottom: 10px;
