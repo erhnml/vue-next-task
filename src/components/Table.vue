@@ -7,7 +7,7 @@
             class="table-column"
             v-for="{ dataIndex, label } in columns"
             :key="dataIndex"
-            @click="handleSort(dataIndex)"
+            @click="onSort(dataIndex)"
           >
             {{ label }}
             <div class="th-icons" v-if="sorting && sorting.key === dataIndex">
@@ -31,7 +31,7 @@
           <td
             v-for="column in columns"
             :key="column.dataIndex"
-            @click="handleRowClick(data)"
+            @click="onRowClick(data)"
           >
             {{ getValueByIndex(column, data) }}
           </td>
@@ -97,13 +97,13 @@ export default {
         : data[dataIndex];
       return render ? render(value, data) : value;
     },
-    handleRowClick({ id }) {
+    onRowClick({ id }) {
       const { to, $router } = this;
       if (to) {
         $router.push(`${to}/${id}`);
       }
     },
-    handleSort(index) {
+    onSort(index) {
       const { sorting } = this;
       if (!sorting || sorting.key != index) {
         this.sorting = {

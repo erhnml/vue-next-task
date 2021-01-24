@@ -106,6 +106,9 @@ export default {
       align-items: center;
       border-bottom: 1px solid #d3d3d3;
       padding: 10px 0px;
+      &-name {
+        max-width: 70%;
+      }
       &-buy-btn {
         background: black;
         border: none;
