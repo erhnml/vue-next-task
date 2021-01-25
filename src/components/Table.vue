@@ -27,11 +27,11 @@
           :key="i"
           class="table-row"
           :class="{ 'link-row': to }"
+          @click="onRowClick(data)"
         >
           <td
             v-for="column in columns"
             :key="column.dataIndex"
-            @click="onRowClick(data)"
           >
             {{ getValueByIndex(column, data) }}
           </td>
@@ -44,7 +44,7 @@
   </div>
   <Pagination
     v-if="dataSource.length"
-    :size="10"
+    :size="size"
     v-model="currentPage"
     :total="dataSource.length"
   />
@@ -92,9 +92,6 @@ export default {
       }
       return modifyData.slice(start, end);
     },
-    totalPage() {
-      return Math.ceil(this.dataSource.length / this.size);
-    },
   },
   methods: {
     getValueByIndex(column, data) {
@@ -137,10 +134,8 @@ export default {
 table {
   table-layout: auto;
   color: rgba(0, 0, 0, 0.85);
-  font-variant: tabular-nums;
   line-height: 1.5715;
   list-style: none;
-  font-feature-settings: "tnum";
   font-size: 16px;
   text-align: left;
   border-collapse: separate;

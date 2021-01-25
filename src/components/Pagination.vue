@@ -13,8 +13,8 @@
       :key="page"
       :class="{
         active: page === modelValue,
-        hide: hidePaginationPage(page),
       }"
+      v-show="!hidePaginationPage(page)"
       @click="$emit('update:modelValue', page)"
     >
       {{ page }}
@@ -77,9 +77,6 @@ export default {
     font-size: 14px;
     &.active {
       border: 2px solid #026cdf;
-    }
-    &.hide {
-      display: none;
     }
   }
 }
